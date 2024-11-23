@@ -19,10 +19,10 @@ const messageSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    msgByUserId: { // Add this field
+    msgByUserId: { 
       type: mongoose.Schema.ObjectId,
       required: true,
-      ref: "User", // Reference to the User model
+      ref: "User", 
     },
   },
   {

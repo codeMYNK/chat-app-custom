@@ -9,12 +9,12 @@ const getConversation = async (currentUserId) => {
             ]
         })
         .sort({ updatedAt: -1 })
-        .populate('message') // Change from 'messages' to 'message'
+        .populate('message') 
         .populate('sender')
         .populate('receiver');
 
         const conversation = currentUserConversation.map((conv) => {
-            const countUnseenMsg = conv?.message?.reduce((preve, curr) => { // Also change from messages to message here
+            const countUnseenMsg = conv?.message?.reduce((preve, curr) => { 
                 const msgByUserId = curr?.msgByUserId?.toString();
 
                 if (msgByUserId !== currentUserId) {
@@ -30,7 +30,7 @@ const getConversation = async (currentUserId) => {
                 sender: conv?.sender,
                 receiver: conv?.receiver,
                 unseenMsg: countUnseenMsg,
-                lastMsg: conv.message[conv?.message?.length - 1] // Also change here
+                lastMsg: conv.message[conv?.message?.length - 1] 
             };
         });
 

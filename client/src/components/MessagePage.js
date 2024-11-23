@@ -45,21 +45,28 @@ const MessagePage = () => {
     setOpenImageVideoUpload(preve => !preve)
   }
 
-  const handleUploadImage = async(e)=>{
-    const file = e.target.files[0]
+  const handleUploadImage = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
 
-    setLoading(true)
-    const uploadPhoto = await uploadFile(file)
-    setLoading(false)
-    setOpenImageVideoUpload(false)
+    setLoading(true);
+    try {
+        const uploadPhoto = await uploadFile(file);
+        // Assuming uploadPhoto contains a secure_url
+        setMessage((prev) => ({
+            ...prev,
+            imageUrl: uploadPhoto.secure_url,
+        }));
+    } catch (error) {
+        // Handle the error, e.g., show a notification to the user
+        console.error("File upload error:", error);
+    } finally {
+        setLoading(false);
+        setOpenImageVideoUpload(false);
+    }
+};
 
-    setMessage(preve => {
-      return{
-        ...preve,
-        imageUrl : uploadPhoto.url
-      }
-    })
-  }
+
   const handleClearUploadImage = ()=>{
     setMessage(preve => {
       return{
@@ -123,27 +130,29 @@ const MessagePage = () => {
     })
   }
 
-  const handleSendMessage = (e)=>{
-    e.preventDefault()
+  const handleSendMessage = (e) => {
+    e.preventDefault();
 
-    if(message.text || message.imageUrl || message.videoUrl){
-      if(socketConnection){
-        socketConnection.emit('new message',{
-          sender : user?._id,
-          receiver : params.userId,
-          text : message.text,
-          imageUrl : message.imageUrl,
-          videoUrl : message.videoUrl,
-          msgByUserId : user?._id
-        })
+    // Include text as an empty string if it's not provided
+    const messageToSend = {
+        sender: user?._id,
+        receiver: params.userId,
+        text: message.text || "", // Ensure text is sent, even if empty
+        imageUrl: message.imageUrl,
+        videoUrl: message.videoUrl,
+        msgByUserId: user?._id
+    };
+
+    if (socketConnection) {
+        socketConnection.emit('new message', messageToSend);
         setMessage({
-          text : "",
-          imageUrl : "",
-          videoUrl : ""
-        })
-      }
+            text: "",
+            imageUrl: "",
+            videoUrl: ""
+        });
     }
-  }
+};
+
 
 
   return (
