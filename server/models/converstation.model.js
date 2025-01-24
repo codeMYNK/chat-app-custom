@@ -5,7 +5,6 @@ const messageSchema = new mongoose.Schema(
     text: {
       type: String,
       default: "",
-      required: true,
     },
     imageUrl: {
       type: String,
@@ -26,11 +25,19 @@ const messageSchema = new mongoose.Schema(
     },
   },
   {
-    timeseries: true,
+    timestamps: true, // Fix: Correctly use timestamps
   }
 );
 
-const converstationSchema = new mongoose.Schema(
+// Add custom validation to ensure at least one of text, imageUrl, or videoUrl is present
+messageSchema.pre("validate", function (next) {
+  if (!this.text && !this.imageUrl && !this.videoUrl) {
+    return next(new Error("At least one of text, imageUrl, or videoUrl is required."));
+  }
+  next();
+});
+
+const conversationSchema = new mongoose.Schema(
   {
     sender: {
       type: mongoose.Schema.ObjectId,
@@ -54,7 +61,7 @@ const converstationSchema = new mongoose.Schema(
   }
 );
 
-const MessageModel = mongoose.model("Message", messageSchema)
-const ConversationModel = mongoose.model("Conversation", converstationSchema)
+const MessageModel = mongoose.model("Message", messageSchema);
+const ConversationModel = mongoose.model("Conversation", conversationSchema);
 
-module.exports = { MessageModel, ConversationModel }
+module.exports = { MessageModel, ConversationModel };
