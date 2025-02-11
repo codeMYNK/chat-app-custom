@@ -6,6 +6,13 @@ const router = require('./routes/index');
 const cookiesParser = require('cookie-parser')
 const { app, server } = require('./socket/index')
 
+
+connectDB().then(()=>{
+  server.listen(PORT,()=>{
+      console.log("server running at " + PORT)
+  })
+});
+
 // const app = express();
 app.use(
   cors({
@@ -29,8 +36,3 @@ app.get("/", (req, res) => {
 app.use('/api', router)
 
 
-connectDB().then(()=>{
-  server.listen(PORT,()=>{
-      console.log("server running at " + PORT)
-  })
-});

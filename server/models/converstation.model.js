@@ -29,7 +29,7 @@ const messageSchema = new mongoose.Schema(
   }
 );
 
-// Add custom validation to ensure at least one of text, imageUrl, or videoUrl is present
+
 messageSchema.pre("validate", function (next) {
   if (!this.text && !this.imageUrl && !this.videoUrl) {
     return next(new Error("At least one of text, imageUrl, or videoUrl is required."));
